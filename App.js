@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,27 +8,46 @@ import {
   FlatList,
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 
 const TASKS = [
   {
-    id: '101',
-    title: 'Task item one',
+    id: '0',
+    title: 'This is a test please update',
     isDone: true,
   },
   {
-    id: '102',
+    id: '1',
     title: 'Another task item',
     isDone: false,
   },
   {
-    id: '103',
+    id: '2',
     title: 'To-do list item third, Lorem ipsum',
     isDone: true,
   },
 ];
 
-const TaskItem = ({task}) => {
+const storeData = async (value) => {
+  try {
+    const jsonValue = JSON.stringify(value);
+    await AsyncStorage.setItem('@storage_Key', jsonValue);
+  } catch (e) {
+    // saving error
+  }
+};
+
+const getData = async () => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('@storage_Key');
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    // error reading value
+  }
+};
+
+const TaskItem = ({task, deleteTask, toggleTaskDoneStatus}) => {
   return (
     <View style={styles.flatListItem}>
       <View style={[styles.inputGroup]}>
@@ -37,7 +56,8 @@ const TaskItem = ({task}) => {
           tintColors={{true: 'gray', false: 'black'}}
           value={task.isDone}
           onValueChange={() => {
-            //
+            // update task `isDone` value
+            // toggleTaskDoneStatus(task.id, !task.isDone);
           }}
         />
         <TextInput
@@ -47,7 +67,7 @@ const TaskItem = ({task}) => {
         <TouchableOpacity
           style={[styles.button]}
           onPress={() => {
-            // delete task item
+            deleteTask(task.id);
           }}>
           <Text style={[styles.buttonLabel]}>Delete</Text>
         </TouchableOpacity>
@@ -57,32 +77,65 @@ const TaskItem = ({task}) => {
 };
 
 export default function App() {
-  const renderItem = ({item}) => <TaskItem task={item} />;
+  const [tasks, setTasks] = React.useState(TASKS);
+  const [newTask, setNewTask] = React.useState('');
+
+  const deleteTask = (id) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id != id));
+  };
+
+  const addTask = (task) => {
+    const dateNow = Date.now().toString();
+    setTasks((prevTasks) => [
+      {id: dateNow, title: task, isDone: false},
+      ...prevTasks,
+    ]);
+  };
+
+  const toggleTaskDoneStatus = (taskID, isDone) => {
+    setTasks((prevTasks) => {
+      const taskIndex = prevTasks.findIndex((task) => task.id == taskID);
+      prevTasks[taskIndex].isDone = isDone;
+
+      console.log(prevTasks[taskIndex].isDone);
+
+      return prevTasks;
+    });
+  };
+
+  const addTaskInputHandler = (value) => {
+    setNewTask(value);
+  };
+
+  const taskItem = ({item}) => (
+    <TaskItem
+      task={item}
+      deleteTask={deleteTask}
+      toggleTaskDoneStatus={toggleTaskDoneStatus}
+    />
+  );
 
   return (
     <View style={styles.wrapper}>
       <View style={[styles.header]}>
-        <Text style={[styles.heading]}>To-do</Text>
+        <Text style={[styles.heading]}>To-do {`(${tasks.length})`}</Text>
       </View>
       <View style={[styles.container]}>
         <View style={[styles.inputGroup, styles.form]}>
           <TextInput
             style={[styles.textInput]}
-            placeholder="Write a to-do item"
+            placeholder="Write something here"
+            onChangeText={addTaskInputHandler}
           />
           <TouchableOpacity
             style={[styles.button, styles.buttonWide]}
             onPress={() => {
-              // add task item
+              addTask(newTask);
             }}>
             <Text style={[styles.buttonLabel]}>Add</Text>
           </TouchableOpacity>
         </View>
-        <FlatList
-          data={TASKS}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+        <FlatList data={tasks} renderItem={taskItem} />
       </View>
     </View>
   );
