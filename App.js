@@ -39,7 +39,7 @@ const TaskItem = ({task, deleteTask, toggleTaskDoneStatus}) => {
           style={[styles.checkbox]}
           tintColors={{true: 'gray', false: 'black'}}
           value={task.isDone}
-          onValueChange={(newValue) => {
+          onValueChange={() => {
             toggleTaskDoneStatus(task.id);
           }}
         />
