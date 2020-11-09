@@ -31,7 +31,7 @@ const getData = async () => {
   }
 };
 
-const TaskItem = ({task, deleteTask, toggleTaskDoneStatus}) => {
+const TaskItem = ({task, updateTask, deleteTask, toggleTaskDoneStatus}) => {
   return (
     <View style={styles.flatListItem}>
       <View style={[styles.inputGroup]}>
@@ -46,6 +46,9 @@ const TaskItem = ({task, deleteTask, toggleTaskDoneStatus}) => {
         <TextInput
           style={[styles.textInput, task.isDone && styles.textStrikeThrough]}
           value={task.title}
+          onChangeText={(newTitle) => {
+            updateTask(task.id, newTitle);
+          }}
         />
         <TouchableOpacity
           style={[styles.button]}
@@ -63,10 +66,6 @@ export default function App() {
   const [tasks, setTasks] = React.useState(TASKS);
   const [newTask, setNewTask] = React.useState('');
 
-  const deleteTask = (id) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id != id));
-  };
-
   const addTask = (task) => {
     if (task == '') {
       return;
@@ -82,11 +81,15 @@ export default function App() {
     setNewTask('');
   };
 
-  const toggleTaskDoneStatus = (taskID) => {
+  const addTaskInputHandler = (value) => {
+    setNewTask(value);
+  };
+
+  const toggleTaskDoneStatus = (id) => {
     setTasks((prevTasks) => {
       const currentTasks = [...prevTasks];
 
-      const taskIndex = currentTasks.findIndex((task) => task.id == taskID);
+      const taskIndex = currentTasks.findIndex((task) => task.id == id);
 
       currentTasks[taskIndex].isDone = !currentTasks[taskIndex].isDone;
 
@@ -94,14 +97,27 @@ export default function App() {
     });
   };
 
-  const addTaskInputHandler = (value) => {
-    setNewTask(value);
+  const updateTask = (id, newTitle) => {
+    setTasks((prevTasks) => {
+      const currentTasks = [...prevTasks];
+
+      const taskIndex = currentTasks.findIndex((task) => task.id == id);
+
+      currentTasks[taskIndex].title = newTitle;
+
+      return currentTasks;
+    });
+  };
+
+  const deleteTask = (id) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id != id));
   };
 
   const taskItem = ({item}) => (
     <TaskItem
       task={item}
       deleteTask={deleteTask}
+      updateTask={updateTask}
       toggleTaskDoneStatus={toggleTaskDoneStatus}
     />
   );
