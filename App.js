@@ -11,23 +11,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 
-const TASKS = [
-  {
-    id: '0',
-    title: 'This is a test please update',
-    isDone: true,
-  },
-  {
-    id: '1',
-    title: 'Another task item',
-    isDone: false,
-  },
-  {
-    id: '2',
-    title: 'To-do list item third, Lorem ipsum',
-    isDone: true,
-  },
-];
+const TASKS = [];
 
 const storeData = async (value) => {
   try {
@@ -55,9 +39,8 @@ const TaskItem = ({task, deleteTask, toggleTaskDoneStatus}) => {
           style={[styles.checkbox]}
           tintColors={{true: 'gray', false: 'black'}}
           value={task.isDone}
-          onValueChange={() => {
-            // update task `isDone` value
-            // toggleTaskDoneStatus(task.id, !task.isDone);
+          onValueChange={(newValue) => {
+            toggleTaskDoneStatus(task.id);
           }}
         />
         <TextInput
@@ -85,21 +68,29 @@ export default function App() {
   };
 
   const addTask = (task) => {
+    if (task == '') {
+      return;
+    }
+
     const dateNow = Date.now().toString();
+
     setTasks((prevTasks) => [
       {id: dateNow, title: task, isDone: false},
       ...prevTasks,
     ]);
+
+    setNewTask('');
   };
 
-  const toggleTaskDoneStatus = (taskID, isDone) => {
+  const toggleTaskDoneStatus = (taskID) => {
     setTasks((prevTasks) => {
-      const taskIndex = prevTasks.findIndex((task) => task.id == taskID);
-      prevTasks[taskIndex].isDone = isDone;
+      const currentTasks = [...prevTasks];
 
-      console.log(prevTasks[taskIndex].isDone);
+      const taskIndex = currentTasks.findIndex((task) => task.id == taskID);
 
-      return prevTasks;
+      currentTasks[taskIndex].isDone = !currentTasks[taskIndex].isDone;
+
+      return currentTasks;
     });
   };
 
@@ -125,6 +116,7 @@ export default function App() {
           <TextInput
             style={[styles.textInput]}
             placeholder="Write something here"
+            value={newTask}
             onChangeText={addTaskInputHandler}
           />
           <TouchableOpacity
