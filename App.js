@@ -113,6 +113,14 @@ export default function App() {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id != id));
   };
 
+  const showDoneTasks = () => {
+    setTasks((prevTasks) => {
+      const doneTasks = prevTasks.filter((task) => task.isDone);
+
+      return doneTasks;
+    });
+  };
+
   const taskItem = ({item}) => (
     <TaskItem
       task={item}
@@ -143,6 +151,24 @@ export default function App() {
             <Text style={[styles.buttonLabel]}>Add</Text>
           </TouchableOpacity>
         </View>
+        {tasks.length > 0 && (
+          <View style={[styles.buttonGroup]}>
+            <TouchableOpacity
+              style={[styles.buttonGroupButton]}
+              onPress={() => {
+                // show all tasks
+              }}>
+              <Text style={[styles.textBold]}>All tasks</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.buttonGroupButton]}
+              onPress={() => {
+                showDoneTasks();
+              }}>
+              <Text style={[styles.textBold]}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <FlatList data={tasks} renderItem={taskItem} />
       </View>
     </View>
@@ -182,6 +208,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontSize: 18,
   },
+  textBold: {
+    fontWeight: 'bold',
+  },
   button: {
     padding: 10,
     paddingLeft: 15,
@@ -197,6 +226,17 @@ const styles = StyleSheet.create({
   buttonLabel: {
     color: '#fff',
     fontSize: 12,
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    borderBottomColor: 'gray',
+    borderBottomWidth: 1,
+  },
+  buttonGroupButton: {
+    padding: 10,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textStrikeThrough: {
     textDecorationLine: 'line-through',
