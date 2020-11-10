@@ -65,6 +65,7 @@ const TaskItem = ({task, updateTask, deleteTask, toggleTaskDoneStatus}) => {
 export default function App() {
   const [tasks, setTasks] = React.useState(TASKS);
   const [newTask, setNewTask] = React.useState('');
+  const [sorting, setSorting] = React.useState('all');
 
   const addTask = (task) => {
     if (task == '') {
@@ -154,16 +155,24 @@ export default function App() {
         {tasks.length > 0 && (
           <View style={[styles.buttonGroup]}>
             <TouchableOpacity
-              style={[styles.buttonGroupButton]}
+              style={[
+                styles.buttonGroupButton,
+                sorting === 'all' ? styles.buttonGroupButtonActive : null,
+              ]}
               onPress={() => {
+                setSorting('all');
                 // show all tasks
               }}>
               <Text style={[styles.textBold]}>All tasks</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.buttonGroupButton]}
+              style={[
+                styles.buttonGroupButton,
+                sorting === 'done' ? styles.buttonGroupButtonActive : null,
+              ]}
               onPress={() => {
-                showDoneTasks();
+                setSorting('done');
+                // showDoneTasks();
               }}>
               <Text style={[styles.textBold]}>Done</Text>
             </TouchableOpacity>
@@ -229,14 +238,17 @@ const styles = StyleSheet.create({
   },
   buttonGroup: {
     flexDirection: 'row',
-    borderBottomColor: 'gray',
-    borderBottomWidth: 1,
   },
   buttonGroupButton: {
     padding: 10,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  buttonGroupButtonActive: {
+    borderBottomColor: 'gray',
   },
   textStrikeThrough: {
     textDecorationLine: 'line-through',
