@@ -11,8 +11,6 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 
-const TASKS = [];
-
 const storeData = async (value) => {
   try {
     const jsonValue = JSON.stringify(value);
@@ -63,7 +61,7 @@ const TaskItem = ({task, updateTask, deleteTask, toggleTaskDoneStatus}) => {
 };
 
 export default function App() {
-  const [tasks, setTasks] = React.useState(TASKS);
+  const [tasks, setTasks] = React.useState([]);
   const [newTask, setNewTask] = React.useState('');
   const [sorting, setSorting] = React.useState('all');
 
@@ -80,6 +78,7 @@ export default function App() {
     ]);
 
     setNewTask('');
+    setSorting('all');
   };
 
   const addTaskInputHandler = (value) => {
@@ -114,14 +113,6 @@ export default function App() {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id != id));
   };
 
-  const showDoneTasks = () => {
-    setTasks((prevTasks) => {
-      const doneTasks = prevTasks.filter((task) => task.isDone);
-
-      return doneTasks;
-    });
-  };
-
   const taskItem = ({item}) => (
     <TaskItem
       task={item}
@@ -134,7 +125,7 @@ export default function App() {
   return (
     <View style={styles.wrapper}>
       <View style={[styles.header]}>
-        <Text style={[styles.heading]}>To-do {`(${tasks.length})`}</Text>
+        <Text style={[styles.heading]}>To-do</Text>
       </View>
       <View style={[styles.container]}>
         <View style={[styles.inputGroup, styles.form]}>
@@ -163,7 +154,7 @@ export default function App() {
                 setSorting('all');
                 // show all tasks
               }}>
-              <Text style={[styles.textBold]}>All tasks</Text>
+              <Text style={[styles.textBold]}>All {`(${tasks.length})`}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -172,13 +163,19 @@ export default function App() {
               ]}
               onPress={() => {
                 setSorting('done');
-                // showDoneTasks();
               }}>
-              <Text style={[styles.textBold]}>Done</Text>
+              <Text style={[styles.textBold]}>
+                Done {`(${tasks.filter((task) => task.isDone).length})`}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
-        <FlatList data={tasks} renderItem={taskItem} />
+        <FlatList
+          data={
+            sorting === 'done' ? tasks.filter((task) => task.isDone) : tasks
+          }
+          renderItem={taskItem}
+        />
       </View>
     </View>
   );
@@ -240,7 +237,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   buttonGroupButton: {
-    padding: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
