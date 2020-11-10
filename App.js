@@ -195,7 +195,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   wrapper: {
+    flex: 1,
     backgroundColor: '#fff',
+    paddingBottom: 200,
   },
   container: {
     paddingTop: 20,
