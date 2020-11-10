@@ -8,9 +8,14 @@ import {
   FlatList,
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 
+const TASKS_STORAGE_KEY = '@tasks';
+
 const TaskItem = ({task, updateTask, deleteTask, toggleTaskDoneStatus}) => {
+  const [editingTitle, setEditingTitle] = React.useState(task.title);
+
   return (
     <View style={styles.flatListItem}>
       <View style={[styles.inputGroup]}>
@@ -24,9 +29,16 @@ const TaskItem = ({task, updateTask, deleteTask, toggleTaskDoneStatus}) => {
         />
         <TextInput
           style={[styles.textInput, task.isDone && styles.textStrikeThrough]}
-          value={task.title}
+          value={editingTitle}
           onChangeText={(newTitle) => {
-            updateTask(task.id, newTitle);
+            // updateTask(task.id, newTitle);
+            setEditingTitle(newTitle);
+          }}
+          onEndEditing={() => {
+            updateTask(task.id, editingTitle);
+          }}
+          onSubmitEditing={() => {
+            updateTask(task.id, editingTitle);
           }}
         />
         <TouchableOpacity
@@ -46,6 +58,31 @@ export default function App() {
   const [newTask, setNewTask] = React.useState('');
   const [sorting, setSorting] = React.useState('all');
 
+  React.useEffect(() => {
+    retrieveTasks();
+  });
+
+  const storeTasks = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem(TASKS_STORAGE_KEY, jsonValue);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const retrieveTasks = async () => {
+    try {
+      const serializedTasks = await AsyncStorage.getItem(TASKS_STORAGE_KEY);
+
+      if (serializedTasks) {
+        setTasks(JSON.parse(serializedTasks));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const addTask = (task) => {
     if (task == '') {
       return;
@@ -53,10 +90,12 @@ export default function App() {
 
     const dateNow = Date.now().toString();
 
-    setTasks((prevTasks) => [
+    /* setTasks((prevTasks) => [
       {id: dateNow, title: task, isDone: false},
       ...prevTasks,
-    ]);
+    ]); */
+
+    storeTasks([{id: dateNow, title: task, isDone: false}, ...tasks]);
 
     setNewTask('');
     setSorting('all');
@@ -67,7 +106,7 @@ export default function App() {
   };
 
   const toggleTaskDoneStatus = (id) => {
-    setTasks((prevTasks) => {
+    /* setTasks((prevTasks) => {
       const currentTasks = [...prevTasks];
 
       const taskIndex = currentTasks.findIndex((task) => task.id == id);
@@ -75,11 +114,19 @@ export default function App() {
       currentTasks[taskIndex].isDone = !currentTasks[taskIndex].isDone;
 
       return currentTasks;
-    });
+    }); */
+
+    const currentTasks = [...tasks];
+
+    const taskIndex = currentTasks.findIndex((task) => task.id == id);
+
+    currentTasks[taskIndex].isDone = !currentTasks[taskIndex].isDone;
+
+    storeTasks(currentTasks);
   };
 
   const updateTask = (id, newTitle) => {
-    setTasks((prevTasks) => {
+    /* setTasks((prevTasks) => {
       const currentTasks = [...prevTasks];
 
       const taskIndex = currentTasks.findIndex((task) => task.id == id);
@@ -87,11 +134,20 @@ export default function App() {
       currentTasks[taskIndex].title = newTitle;
 
       return currentTasks;
-    });
+    }); */
+    const currentTasks = [...tasks];
+
+    const taskIndex = currentTasks.findIndex((task) => task.id == id);
+
+    currentTasks[taskIndex].title = newTitle;
+
+    storeTasks(currentTasks);
   };
 
   const deleteTask = (id) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id != id));
+    // setTasks((prevTasks) => prevTasks.filter((task) => task.id != id));
+    const currentTasks = [...tasks];
+    storeTasks(currentTasks.filter((task) => task.id != id));
   };
 
   const taskItem = ({item}) => (
@@ -106,7 +162,7 @@ export default function App() {
   return (
     <View style={styles.wrapper}>
       <View style={[styles.header]}>
-        <Text style={[styles.heading]}>To-do</Text>
+        <Text style={[styles.heading]}>To Do list</Text>
       </View>
       <View style={[styles.container]}>
         <View style={[styles.inputGroup, styles.form]}>
