@@ -90,11 +90,6 @@ export default function App() {
 
     const dateNow = Date.now().toString();
 
-    /* setTasks((prevTasks) => [
-      {id: dateNow, title: task, isDone: false},
-      ...prevTasks,
-    ]); */
-
     storeTasks([{id: dateNow, title: task, isDone: false}, ...tasks]);
 
     setNewTask('');
@@ -106,16 +101,6 @@ export default function App() {
   };
 
   const toggleTaskDoneStatus = (id) => {
-    /* setTasks((prevTasks) => {
-      const currentTasks = [...prevTasks];
-
-      const taskIndex = currentTasks.findIndex((task) => task.id == id);
-
-      currentTasks[taskIndex].isDone = !currentTasks[taskIndex].isDone;
-
-      return currentTasks;
-    }); */
-
     const currentTasks = [...tasks];
 
     const taskIndex = currentTasks.findIndex((task) => task.id == id);
@@ -126,15 +111,6 @@ export default function App() {
   };
 
   const updateTask = (id, newTitle) => {
-    /* setTasks((prevTasks) => {
-      const currentTasks = [...prevTasks];
-
-      const taskIndex = currentTasks.findIndex((task) => task.id == id);
-
-      currentTasks[taskIndex].title = newTitle;
-
-      return currentTasks;
-    }); */
     const currentTasks = [...tasks];
 
     const taskIndex = currentTasks.findIndex((task) => task.id == id);
@@ -145,7 +121,6 @@ export default function App() {
   };
 
   const deleteTask = (id) => {
-    // setTasks((prevTasks) => prevTasks.filter((task) => task.id != id));
     const currentTasks = [...tasks];
     storeTasks(currentTasks.filter((task) => task.id != id));
   };
