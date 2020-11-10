@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray',
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop: 80,
+    paddingTop: 30,
     paddingBottom: 20,
   },
   heading: {
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     textDecorationStyle: 'solid',
   },
   checkbox: {
-    marginTop: 3,
+    marginTop: 10,
     marginLeft: -10,
   },
   flatList: {
