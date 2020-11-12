@@ -1,8 +1,8 @@
 # To Do app demo
 
-A simple To-do list app demo using [React Native](https://reactnative.dev/) (built using React Native CLI).
+A simple To Do list app demo using [React Native](https://reactnative.dev/) (built using React Native CLI).
 
-![Code and Android emulator screenshot](https://repository-images.githubusercontent.com/311029754/cfea2b80-239d-11eb-9760-c371bc15c520)
+![Code and Android emulator screenshot](https://repository-images.githubusercontent.com/311029754/91877480-2535-11eb-805f-3ab12836f780)
 
 ## Features
 
