@@ -31,7 +31,6 @@ const TaskItem = ({task, updateTask, deleteTask, toggleTaskDoneStatus}) => {
           style={[styles.textInput, task.isDone && styles.textStrikeThrough]}
           value={editingTitle}
           onChangeText={(newTitle) => {
-            // updateTask(task.id, newTitle);
             setEditingTitle(newTitle);
           }}
           onEndEditing={() => {
@@ -135,7 +134,7 @@ export default function App() {
   );
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper]}>
       <View style={[styles.header]}>
         <Text style={[styles.heading]}>To Do list</Text>
       </View>
@@ -164,7 +163,6 @@ export default function App() {
               ]}
               onPress={() => {
                 setSorting('all');
-                // show all tasks
               }}>
               <Text style={[styles.textBold]}>All {`(${tasks.length})`}</Text>
             </TouchableOpacity>
