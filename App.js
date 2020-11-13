@@ -17,7 +17,7 @@ const TaskItem = ({task, updateTask, deleteTask, toggleTaskDoneStatus}) => {
   const [editingTitle, setEditingTitle] = React.useState(task.title);
 
   return (
-    <View style={styles.flatListItem}>
+    <View style={[styles.flatListItem]}>
       <View style={[styles.inputGroup]}>
         <CheckBox
           style={[styles.checkbox]}
