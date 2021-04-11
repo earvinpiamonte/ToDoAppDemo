@@ -17,6 +17,6 @@ A simple To Do list app demo using [React Native](https://reactnative.dev/) (bui
 
 ## Development
 
-This project is developed by [@earvinpiamonte](https://twitter.com/earvinpiamonte).
+This project is developed by [earvinpiamonte.com](https://www.earvinpiamonte.com).
 
 Everything is on `App.js` file. I'm going to sleep now.
